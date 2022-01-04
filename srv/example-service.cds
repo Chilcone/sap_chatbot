@@ -1,6 +1,10 @@
-using my.sales as my from '../db/example-model';
+using OP_API_SALES_ORDER_SRV_0001.A_SalesOrder as salesorder from './external/OP_API_SALES_ORDER_SRV_0001';
 
 service ExampleService {
-  entity SaleOrders @readonly as projection on my.SaleOrders;
-  entity ProductManagers @readonly as projection on my.ProductManagers;
+
+  @readonly
+  entity TestSaleOrders as projection on salesorder {
+    key SalesOrder, LastChangeDate, CreationDate, TotalNetAmount
+  };
+
 }

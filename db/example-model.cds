@@ -1,7 +1,7 @@
 namespace my.sales;
 
 entity SaleOrders {
-  key ID : Integer;
+  key ID : UUID;
   title  : localized String;
   productManager : Association to ProductManagers;
   stock  : Integer;
