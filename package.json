@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@sap/cds": "^5",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.8.4",
     "express": "^4"
   },
   "devDependencies": {
@@ -41,6 +42,17 @@
     "rules": {
       "no-console": "off",
       "require-atomic-updates": "off"
+    }
+  },
+  "cds": {
+    "requires": {
+      "OP_API_SALES_ORDER_SRV_0001": {
+        "kind": "odata-v2",
+        "model": "srv\\external\\OP_API_SALES_ORDER_SRV_0001",
+        "credentials": {
+          "destination": "ERP_IDA_SO_SRV"
+        }
+      }
     }
   }
 }
