@@ -109,3 +109,4 @@ dist
 # MTA Build files
 gen
 *.mtar
+*.mta
