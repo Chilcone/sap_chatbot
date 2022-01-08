@@ -4,7 +4,7 @@ service ExampleService {
 
   @readonly
   entity TestSaleOrders as projection on salesorder {
-    key SalesOrder, LastChangeDate, CreationDate, TotalNetAmount
+    key SalesOrder, SalesOrderType, OverallSDProcessStatus, LastChangeDate, CreationDate, TotalNetAmount, TransactionCurrency
   };
 
 }
