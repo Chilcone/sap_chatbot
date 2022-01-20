@@ -1,45 +1,85 @@
 const cds = require("@sap/cds");
 const express = require('express');
+const https = require('https');
 
 const proxy = require("@sap/cds-odata-v2-adapter-proxy"); //enable OData 2 support
 cds.on("bootstrap", (app) => {
     app.use(proxy())
     app.use(express.json())
 
-    // Here you can define as many endpoints as you want 
-    // We won't need any get requests it is just for example
-    app.get('/tile', (req, res) => {
-        // do stuff using the req.user.id and return whatever you'd like
-        res.json({
-            tileType: 'sap.sf.homepage3.tiles.DynamicTile',
-            properties: {
-            title: 'Flashy Tile',
-            subtitle: 'Best Run Company',
-            numberValue: '8.67',
-            numberState: 'Positive',
-            numberDigits: 2,
-            stateArrow: 'Up',
-            numberFactor: '$',
-            icon: 'sap-icon://line-chart',
-            info: 'NASDAQ',
-            subinfo: 'BSTR'
-            }
+    app.post('/orders', async function(req, resp) {
+        let ids = req.body.nlp.entities['sales-order-number'].map(element => element.raw)
+        var filterParams = ids.map(id => `SalesOrder eq '${id}'`)
+        var filter = filterParams.join(" or ")
+        let url = "https://" + req.headers.host + '/example/SalesOrders?$filter=(' + filter + ')'
+        console.log(url)
+        https.get(url, res => {
+            let data = []
+            res.on('data', chunk => {
+                data.push(chunk)
+            })
+            res.on('end', () => {
+                const responseData = JSON.parse(Buffer.concat(data).toString());
+                console.log(responseData.value)
+                let messages = getMessages(responseData.value)
+
+                resp.send({
+                    "replies": [ messages
+                    ],
+                    "conversation": req.body.conversation,
+                   })
+            })
+        }).on('error', err => {
+              console.log('Error: ', err.message);
+              resp.send(err)
         })
     })
-
-    // You can directly define your endpoint here and it will be reachable directly <domain>/<endpoint>
-    // You will be getting the whole chatbot memory and necessary information in the body. You can check https://help.sap.com/doc/9b639cad3d734675971ab22ed10bbf28/latest/en-US/UserGuideToConceptsOfSAPConversationalAI.pdf
-    // to see response format(4.12.6 Getting Response Using Webhook)
-    // 
-    // You will also get the fields in requirements in the body.conversation.body.<field>
-    // We have all the necessary information from CAI and just need to return in correct form. Be careful about updating memory and language.
-    // See example-service.js to see how to connect to OData service and use it.
-    app.post('/salesOrderWithIds', (req, res) => {
-        console.log(req.body)
-        const json = req.body
-        console.log(json.orders)
-        res.send(req.body)
-    })
 }) 
+
+function getMessages(data) {
+    if (data.length == 0) {
+        return {
+            "type": "text",
+            "content": "There is no Sales Order with given IDs."
+        }
+    } else if (data.length == 1) {
+        let order = data[0]
+        return card(order)
+    } else {
+        let cards = data.map( order => listElement(order))
+        console.log(cards)
+        return {
+            "type": "list",
+            "content": {
+              "title": "YOUR SALES ORDERS",
+              "total": data.length,
+              "elements": cards
+            }
+          }
+    }
+}
+
+function card(order) { 
+    return {
+        "type": "card",
+        "content": {
+          "title": "SALES ORDER " + order.SalesOrder,
+          "subtitle": "Type: " + order.SalesOrderType + " Date: " + order.CreationDate,
+          "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
+          "status": order.OverallSDProcessStatus,
+          "statusState": "success"
+        }
+    }
+}
+
+function listElement(order) { 
+    return {
+        "title": "SALES ORDER " + order.SalesOrder,
+        "subtitle": "Type: " + order.SalesOrderType + " Date: " + order.CreationDate,
+        "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
+        "status": order.OverallSDProcessStatus,
+        "statusState": "success"
+    }
+}
 
 module.exports = cds.server

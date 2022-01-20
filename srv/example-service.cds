@@ -3,7 +3,7 @@ using OP_API_SALES_ORDER_SRV_0001.A_SalesOrder as salesorder from './external/OP
 service ExampleService {
 
   @readonly
-  entity TestSaleOrders as projection on salesorder {
+  entity SalesOrders as projection on salesorder {
     key SalesOrder, SalesOrderType, OverallSDProcessStatus, LastChangeDate, CreationDate, TotalNetAmount, TransactionCurrency
   };
 
