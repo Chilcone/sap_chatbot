@@ -10,7 +10,7 @@ service ExampleService {
 
   @readonly
   entity Products as projection on product {
-    key Product
+    key Product, ProductType, CreationDate, CreatedByUser, LastChangedByUser, LastChangeDateTime, GrossWeight
   };
 
 }
