@@ -10,8 +10,12 @@ module.exports = cds.service.impl(async function() {
         console.debug('>>>', req.method, req.target.name)
     });
 
-	this.on('READ', SalesOrders, Products, request => {
-		return salesService.tx(request).run(request.query) && productsService.tx(request).run(request.query);
+	this.on('READ', SalesOrders, request => {
+		return salesService.tx(request).run(request.query);
+	});
+
+	this.on('READ', Products, request => {
+		return productsService.tx(request).run(request.query);
 	});
 	
 });
