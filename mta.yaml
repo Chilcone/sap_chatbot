@@ -54,18 +54,6 @@ resources:
               User: TUMWS21
               Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
-       service: destination
-       service-plan: lite
-
-  - name: my-destination-service2
-    type: org.cloudfoundry.managed-service
-    parameters:
-       config:
-        HTML5Runtime_enabled: true
-        version: 1.0.0
-        init_data:
-          instance:
-            destinations:
             - Authentication: BasicAuthentication
               Name: ERP_IDA_SO_SRV
               ProxyType: OnPremise
