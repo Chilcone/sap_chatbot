@@ -10,7 +10,7 @@ cds.on("bootstrap", (app) => {
     app.use(express.json())
 
     app.post('/orders', async function(req, resp) { ordersHelper.ordersResponse(req, resp) })
-    app.post('/products', async function(req, resp){productsHelper.productsResponse(req, resp)})
+    app.post('/products', async function(req, resp){ productsHelper.productsResponse(req, resp) })
 }) 
 
 module.exports = cds.server
