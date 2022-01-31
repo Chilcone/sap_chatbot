@@ -3,6 +3,7 @@ const express = require('express');
 const ordersHelper = require('./SalesOrders/orders.js')
 const ordersOrdinalHelper = require('./SalesOrders/ordersOrdinal.js')
 const ordersDateHelper = require('./SalesOrders/ordersDate.js')
+const productsHelper = require('./Products/products.js')
 
 
 const proxy = require("@sap/cds-odata-v2-adapter-proxy"); //enable OData 2 support
@@ -15,6 +16,7 @@ cds.on("bootstrap", (app) => {
     app.post('/orders/ordinal', async function(req, resp) { ordersOrdinalHelper.ordersOrdinalResponse(req, resp) })
     app.post('/orders/date', async function(req, resp) { ordersDateHelper.ordersDateResponse(req, resp) })
 
+    app.post('/products', async function(req, resp){ productsHelper.productsResponse(req, resp) })
 }) 
 
 module.exports = cds.server
