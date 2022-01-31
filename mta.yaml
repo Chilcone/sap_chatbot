@@ -55,7 +55,7 @@ resources:
               Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
             - Authentication: BasicAuthentication
-              Name: ERP_IDA_SO_SRV
+              Name: ERP_IDA_PRO_SRV
               ProxyType: OnPremise
               CloudConnectorLocationId: SCC01
               Type: HTTP

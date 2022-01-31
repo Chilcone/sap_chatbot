@@ -57,7 +57,7 @@
         "kind": "odata-v2",
         "model": "srv\\external\\API_PRODUCT_SRV",
         "credentials": {
-          "destination": "ERP_IDA_SO_SRV"
+          "destination": "ERP_IDA_PRO_SRV"
         }
       }
     }
