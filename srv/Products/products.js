@@ -29,10 +29,13 @@ async function productsResponse(req, resp) {
 async function productsFromSalesOrder(req, resp) {
     
     let salesOrderId = req.body.conversation.memory.salesOrderNumber.raw;
-    let productId = await getProductId(req, salesOrderId);
+    let productIds = await getProductIds(req, salesOrderId);
       
-    if (productId != null && productId != undefined) {
-        url = "https://" + req.headers.host + "/example/Products('" + productId + "')"
+    if (productIds != null && productIds != undefined && productIds.length > 0) {
+
+        var filterParams = productIds.map(id => `Product eq '${id}'`)
+        var filter = filterParams.join(" or ")
+        url = "https://" + req.headers.host + '/example/Products?$filter=(' + filter + ')'
         https.get(url, res => {
             let data = []
             res.on('data', chunk => {
@@ -41,9 +44,7 @@ async function productsFromSalesOrder(req, resp) {
             res.on('end', () => {
                 log.info("DATA PRODUCT: " + data);
                 const responseData = JSON.parse(Buffer.concat(data).toString());
-                log.info("DATA RESPONSE: " + responseData);
-
-                let messages = getMessages(responseData, true)
+                let messages = getMessages(responseData.value)
 
                 resp.send({
                     "replies": [ messages
@@ -70,7 +71,7 @@ async function productsFromSalesOrder(req, resp) {
 
 module.exports = { productsResponse, productsFromSalesOrder } 
 
-function getProductId(req, salesOrderId) {
+function getProductIds(req, salesOrderId) {
     let url = "https://" + req.headers.host + "/example/SalesOrders('" + salesOrderId + "')/to_Item"
     return new Promise((resolve, reject) => {
         https.get(url, (response) => {
@@ -80,28 +81,24 @@ function getProductId(req, salesOrderId) {
             })
             response.on('end', () => {
                 let responseData = JSON.parse(Buffer.concat(data).toString());
-                productId = responseData.value[0].Material; //Material is the Product Id
-                resolve(productId);
+                productIds = responseData.value.map(x => x.Material); //Material is the Product Id
+                resolve(productIds);
             });
             response.on('error', err => reject(err));
         })
     });
 }
 
-function getMessages(data, isSingleProduct) {
+function getMessages(data) {
     if (data.length == 0) {
         return {
             "type": "text",
             "content": "There is no Product."
         }
-    } else if (data.length == 1 || isSingleProduct) {
-        if (isSingleProduct) {
-            let product = data;
-            return card(product)
-        } else {
-            let product = data[0]
-            return card(product)
-        }
+    } else if (data.length == 1) {
+        let product = data[0]
+        return card(product)
+        
     } else {
         let cards = data.map( product => listElement(product))
         return {
