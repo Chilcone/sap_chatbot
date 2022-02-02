@@ -367,10 +367,7 @@ entity OP_API_SALES_ORDER_SRV_0001.A_SalesOrder {
   @sap.label : 'Customer Group 10'
   RetailAdditionalCustomerGrp10 : String(3);
 
-  /**
-   * Please add  an ON condition
-   */
-  to_Item : Association to many OP_API_SALES_ORDER_SRV_0001.A_SalesOrderItem {  };
+  to_Item : Association to many OP_API_SALES_ORDER_SRV_0001.A_SalesOrderItem on to_Item.SalesOrder = $self.SalesOrder;
 
   /**
    * Please add  an ON condition
