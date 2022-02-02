@@ -8,6 +8,8 @@
   "dependencies": {
     "@sap/cds": "^5",
     "@sap/cds-odata-v2-adapter-proxy": "^1.8.4",
+    "cf-nodejs-logging-support": "^6.12.0",
+    "dotenv": "^15.0.0",
     "express": "^4"
   },
   "devDependencies": {
