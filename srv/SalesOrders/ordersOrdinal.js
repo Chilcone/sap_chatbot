@@ -1,16 +1,14 @@
 const https = require('https');
+const utility = require('./utility.js')
 
 async function ordersOrdinalResponse(req, resp) { 
     let count = 1
     if('sales-order-number' in req.body.nlp.entities) {
         count = req.body.nlp.entities['sales-order-number'][0].value
     }
-    console.log(count)
-    let ordinal = req.body.nlp.entities['order-ordinal'][0].value
-    console.log(ordinal)
-    if(ordinal == 'last' || ordinal == 'recent') { 
-        ordinal = 'desc'
-    } else {
+
+    let ordinal = 'desc'
+    if(req.body.nlp.entities['ordinal'][0].rank > 0) { 
         ordinal = 'asc'
     }
     let url = "https://" + req.headers.host + '/example/SalesOrders?$orderby=CreationDate%20'+ordinal+'&$top='+count
@@ -22,7 +20,7 @@ async function ordersOrdinalResponse(req, resp) {
         })
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
-            let messages = getMessages(responseData.value)
+            let messages = utility.getMessages(responseData.value)
 
             resp.send({
                 "replies": [ messages
@@ -34,51 +32,6 @@ async function ordersOrdinalResponse(req, resp) {
         console.log('Error: ', err.message);
         resp.send(err)
     })
-}
-
-function getMessages(data) {
-    if (data.length == 0) {
-        return {
-            "type": "text",
-            "content": "There is no Sales Order with given date."
-        }
-    } else if (data.length == 1) {
-        let order = data[0]
-        return card(order)
-    } else {
-        let cards = data.map( order => listElement(order))
-        return {
-            "type": "list",
-            "content": {
-              "title": "YOUR SALES ORDERS",
-              "total": data.length,
-              "elements": cards
-            }
-          }
-    }
-}
-
-function card(order) { 
-    return {
-        "type": "card",
-        "content": {
-          "title": "SALES ORDER #" + order.SalesOrder,
-          "subtitle": "Type: " + order.SalesOrderType + " Date: " + order.CreationDate,
-          "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
-          "status": order.OverallSDProcessStatus,
-          "statusState": "success"
-        }
-    }
-}
-
-function listElement(order) { 
-    return {
-        "title": "SALES ORDER #" + order.SalesOrder,
-        "subtitle": "Type: " + order.SalesOrderType + " Date: " + order.CreationDate,
-        "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
-        "status": order.OverallSDProcessStatus,
-        "statusState": "success"
-    }
 }
 
 module.exports = { ordersOrdinalResponse } 
