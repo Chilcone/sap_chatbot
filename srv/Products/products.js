@@ -3,8 +3,10 @@ const log = require('cf-nodejs-logging-support');
 const e = require('express');
 
 async function productsResponse(req, resp) {
-
-        let url = "https://" + req.headers.host + '/example/Products'
+        let ids = req.body.nlp.entities['id'].map(element => element.raw)
+        var filterParams = ids.map(id => `Product eq '${id}'`)
+        var filter = filterParams.join(" or ")
+        let url = "https://" + req.headers.host + '/example/Products?$filter=(' + filter + ')'
         https.get(url, res => {
             let data = []
             res.on('data', chunk => {
@@ -32,7 +34,7 @@ async function productsFromSalesOrder(req, resp) {
     let productIds = await getProductIds(req, salesOrderId);
       
     if (productIds != null && productIds != undefined && productIds.length > 0) {
-
+        // For testing multiple products, use SalesOrder with ID 127
         var filterParams = productIds.map(id => `Product eq '${id}'`)
         var filter = filterParams.join(" or ")
         url = "https://" + req.headers.host + '/example/Products?$filter=(' + filter + ')'

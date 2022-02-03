@@ -1,7 +1,8 @@
 const https = require('https');
+const utility = require('./utility.js')
 
 async function ordersResponse(req, resp) {
-    let ids = req.body.nlp.entities['sales-order-number'].map(element => element.raw)
+    let ids = req.body.nlp.entities['id'].map(element => element.raw)
     var filterParams = ids.map(id => `SalesOrder eq '${id}'`)
     var filter = filterParams.join(" or ")
     let url = "https://" + req.headers.host + '/example/SalesOrders?$filter=(' + filter + ')'
@@ -12,7 +13,7 @@ async function ordersResponse(req, resp) {
         })
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
-            let messages = getMessages(responseData.value)
+            let messages = utility.getMessages(responseData.value)
 
             resp.send({
                 "replies": [messages
@@ -24,51 +25,6 @@ async function ordersResponse(req, resp) {
         console.log('Error: ', err.message);
         resp.send(err)
     })
-}
-
-function getMessages(data) {
-    if (data.length == 0) {
-        return {
-            "type": "text",
-            "content": "There is no Sales Order with given IDs."
-        }
-    } else if (data.length == 1) {
-        let order = data[0]
-        return card(order)
-    } else {
-        let cards = data.map(order => listElement(order))
-        return {
-            "type": "list",
-            "content": {
-                "title": "YOUR SALES ORDERS",
-                "total": data.length,
-                "elements": cards
-            }
-        }
-    }
-}
-
-function card(order) {
-    return {
-        "type": "card",
-        "content": {
-            "title": "SALES ORDER #" + order.SalesOrder,
-            "subtitle": "Type: " + order.SalesOrderType + ", Date: " + order.CreationDate,
-            "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
-            "status": order.OverallSDProcessStatus,
-            "statusState": "success"
-        }
-    }
-}
-
-function listElement(order) {
-    return {
-        "title": "SALES ORDER #" + order.SalesOrder,
-        "subtitle": "Type: " + order.SalesOrderType + ", Date: " + order.CreationDate,
-        "description": order.TotalNetAmount.toString() + ' ' + order.TransactionCurrency,
-        "status": order.OverallSDProcessStatus,
-        "statusState": "success"
-    }
 }
 
 module.exports = { ordersResponse } 
