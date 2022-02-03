@@ -2,7 +2,7 @@ const https = require('https');
 const utility = require('./utility.js')
 
 async function ordersResponse(req, resp) {
-    let ids = req.body.nlp.entities['sales-order-number'].map(element => element.raw)
+    let ids = req.body.nlp.entities['id'].map(element => element.raw)
     var filterParams = ids.map(id => `SalesOrder eq '${id}'`)
     var filter = filterParams.join(" or ")
     let url = "https://" + req.headers.host + '/example/SalesOrders?$filter=(' + filter + ')'
