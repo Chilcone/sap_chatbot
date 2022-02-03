@@ -2,7 +2,8 @@ const https = require('https');
 const utility = require('./utility.js')
 
 async function ordersResponse(req, resp) {
-    let ids = req.body.nlp.entities['id'].map(element => element.raw)
+    let ids = req.body.nlp.entities['id'].map(element => element.scalar)    
+    
     var filterParams = ids.map(id => `SalesOrder eq '${id}'`)
     var filter = filterParams.join(" or ")
     let url = "https://" + req.headers.host + '/example/SalesOrders?$filter=(' + filter + ')'
@@ -14,7 +15,9 @@ async function ordersResponse(req, resp) {
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
             let messages = utility.getMessages(responseData.value)
-
+            if(responseData.value.length == 1) {
+                req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
+            }
             resp.send({
                 "replies": [messages
                 ],
