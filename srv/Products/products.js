@@ -30,7 +30,7 @@ async function productsResponse(req, resp) {
 
 async function productsFromSalesOrder(req, resp) {
     
-    let salesOrderId = req.body.conversation.memory.salesOrderNumber.raw;
+    let salesOrderId = req.body.conversation.memory.lastOrderID
     let productIds = await getProductIds(req, salesOrderId);
       
     if (productIds != null && productIds != undefined && productIds.length > 0) {
