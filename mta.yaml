@@ -50,18 +50,18 @@ resources:
               ProxyType: OnPremise
               CloudConnectorLocationId: SCC01
               Type: HTTP
-              URL: 
-              User:
-              Password:
+              URL: http://sapi02.ibsolution.de/sap/opu/odata/sap/API_SALES_ORDER_SRV
+              User: TUMWS21
+              Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
             - Authentication: BasicAuthentication
               Name: ERP_IDA_PRO_SRV
               ProxyType: OnPremise
               CloudConnectorLocationId: SCC01
               Type: HTTP
-              URL: 
-              User:
-              Password:
+              URL: http://sapi02.ibsolution.de/sap/opu/odata/sap/API_PRODUCT_SRV
+              User: TUMWS21
+              Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
        service: destination
        service-plan: lite
