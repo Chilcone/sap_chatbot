@@ -64,11 +64,11 @@ resources:
               Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
             - Authentication: BasicAuthentication
-              Name: ERP_IDA_BILLING_SRV
+              Name: ERP_IDA_BD_SRV
               ProxyType: OnPremise
               CloudConnectorLocationId: SCC01
               Type: HTTP
-              URL: http://sapi02.ibsolution.de/sap/opu/odata/sap/API_BILLING_SRV
+              URL: http://sapi02.ibsolution.de/sap/opu/odata/sap/API_BILLING_DOCUMENT_SRV
               User: TUMWS21
               Password: IBsolution2022!
               HTML5.ForwardAuthToken: true
