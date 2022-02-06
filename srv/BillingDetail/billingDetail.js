@@ -2,7 +2,7 @@ const https = require('https');
 const log = require('cf-nodejs-logging-support');
 const e = require('express');
 
-async function billingsResponce(req, resp) {
+async function billingsResponse(req, resp) {
     let ids = req.body.nlp.entities['id'].map(element => element.raw)
     var filterParams = ids.map(id => `BillingDocument eq '${id}'`)
     var filter = filterParams.join(" or ")
@@ -112,7 +112,7 @@ async function billingsFromSalesOrder(req, resp) {
         })
     }
 }
-module.exports = {billingsResponce, billingsFromSalesOrder, billingsDateResponse}
+module.exports = {billingsResponse, billingsFromSalesOrder, billingsDateResponse}
 
 function getBillingIds(req, salesOrderId) {
     let url = "https://" + req.headers.host + "/example/SalesOrders('" + salesOrderId + "')/to_PaymentPlanItemDetails"
