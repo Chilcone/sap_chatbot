@@ -18,7 +18,7 @@ cds.on("bootstrap", (app) => {
     app.post('/products', async function(req, resp){ productsHelper.productsResponse(req, resp) })
     app.post('/productsFromSalesOrder', async function(req, resp){ productsHelper.productsFromSalesOrder(req, resp) })
     
-    app.post('/billings', async function(req, resp){ bllingsHelper.billingsResponce(req, resp) })
+    app.post('/billings', async function(req, resp){ bllingsHelper.billingsResponse(req, resp) })
     app.post('/billings/date', async function(req, resp){ bllingsHelper.billingsDateResponse(req, resp) })
     app.post('/billingsFromSalesOrder',  async function(req, resp){ bllingsHelper.billingsFromSalesOrder(req, resp) })
     
