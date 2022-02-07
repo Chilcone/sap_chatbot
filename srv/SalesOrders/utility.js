@@ -2,7 +2,7 @@ function getMessages(data) {
     if (data.length == 0) {
         return {
             "type": "text",
-            "content": "There is no Sales Order with given IDs."
+            "content": "There is no Sales Order with given information."
         }
     } else if (data.length == 1) {
         let order = data[0]
