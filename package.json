@@ -62,6 +62,13 @@
         "credentials": {
           "destination": "ERP_IDA_PRO_SRV"
         }
+      },
+      "API_BILLING_DOCUMENT_SRV": {
+        "kind": "odata-v2",
+        "model": "srv\\external\\API_BILLING_DOCUMENT_SRV",
+        "credentials": {
+          "destination": "ERP_IDA_BD_SRV"
+        }
       }
     }
   }
