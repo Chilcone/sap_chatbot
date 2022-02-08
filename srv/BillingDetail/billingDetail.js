@@ -57,9 +57,6 @@ async function billingsDateResponse(req, resp) {
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
             let messages = getMessages(responseData.value)
-            // if(responseData.value.length == 1) {
-            //     req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
-            // }
             resp.send({
                 "replies": [ messages
                 ],
@@ -74,48 +71,8 @@ async function billingsDateResponse(req, resp) {
 
 async function billingsFromSalesOrder(req, resp) {
     let salesOrderId = req.body.conversation.memory.salesOrderNumber.raw;
-    let billingsIds = await getBillingIds(req, salesOrderId);
-
-    if (billingsIds != null && billingsIds != undefined && billingsIds.length > 0) {
-        var filterParams = billingsIds.map(id => `Billing eq '${id}'`)
-        var filter = filterParams.join(" or ")
-        url = "https://" + req.headers.host + '/example/Billings?$filter=(' + filter + ')'
-        https.get(url, res => {
-            let data = []
-            res.on('data', chunk => {
-                data.push(chunk)
-            })
-            res.on('end', () => {
-                log.info("DATA PRODUCT: " + data);
-                const responseData = JSON.parse(Buffer.concat(data).toString());
-                let messages = getMessages(responseData.value)
-
-                resp.send({
-                    "replies": [ messages
-                    ],
-                    "conversation": req.body.conversation,
-                })
-            })
-        }).on('error', err => {
-            console.log('Error: ', err.message);
-            resp.send(err)
-        })
-    } else {
-        resp.send({
-            "replies": [ 
-                {
-                    "type": "text",
-                    "content": "There are no billings associated with this order." 
-                }
-            ],
-            "conversation": req.body.conversation,
-        })
-    }
-}
-module.exports = {billingsResponse, billingsFromSalesOrder, billingsDateResponse}
-
-function getBillingIds(req, salesOrderId) {
-    let url = "https://" + req.headers.host + "/example/SalesOrders('" + salesOrderId + "')/to_PaymentPlanItemDetails"
+    var filter = `OrderID eq '${salesOrderId}'`
+    let url = "https://" + req.headers.host + '/example/Billings?$filter=(' + filter + ')'
     return new Promise((resolve, reject) => {
         https.get(url, (response) => {
             let data = [];
@@ -124,13 +81,19 @@ function getBillingIds(req, salesOrderId) {
             })
             response.on('end', () => {
                 let responseData = JSON.parse(Buffer.concat(data).toString());
-                billingIds = responseData.value.map(x => x.PaymentPlan); //Material is the Billing Id
-                resolve(billingIds);
+                let messages = getMessages(responseData.value)
+                resp.send({
+                    "replies": [ messages
+                    ],
+                    "conversation": req.body.conversation,
+                })
             });
             response.on('error', err => reject(err));
         })
     });
 }
+module.exports = {billingsResponse, billingsFromSalesOrder, billingsDateResponse}
+
 
 function getMessages(data) {
     if (data.length == 0) {
