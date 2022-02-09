@@ -15,7 +15,7 @@ async function ordersResponse(req, resp) {
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
             let messages = utility.getMessages(responseData.value)
-            if(responseData.value.length == 1) {
+            if(responseData.value.length === 1) {
                 req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
             }
             resp.send({
