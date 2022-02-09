@@ -33,7 +33,7 @@ async function productsFromSalesOrder(req, resp) {
     let salesOrderId = req.body.conversation.memory.lastOrderID
     let productIds = await getProductIds(req, salesOrderId);
       
-    if (productIds != null && productIds != undefined && productIds.length > 0) {
+    if (productIds != null && productIds.length > 0) {
         // For testing multiple products, use SalesOrder with ID 127
         var filterParams = productIds.map(id => `Product eq '${id}'`)
         var filter = filterParams.join(" or ")
@@ -83,7 +83,7 @@ function getProductIds(req, salesOrderId) {
             })
             response.on('end', () => {
                 let responseData = JSON.parse(Buffer.concat(data).toString());
-                productIds = responseData.value.map(x => x.Material); //Material is the Product Id
+                let productIds = responseData.value.map(x => x.Material); //Material is the Product Id
                 resolve(productIds);
             });
             response.on('error', err => reject(err));
@@ -92,12 +92,12 @@ function getProductIds(req, salesOrderId) {
 }
 
 function getMessages(data) {
-    if (data.length == 0) {
+    if (data.length === 0) {
         return {
             "type": "text",
             "content": "There is no Product."
         }
-    } else if (data.length == 1) {
+    } else if (data.length === 1) {
         let product = data[0]
         return card(product)
         
