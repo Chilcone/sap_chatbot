@@ -1,8 +1,17 @@
+/**
+ * Prepares Conversational AI responses according to SalesOrder counts in data.
+ * If no data, then a single message.
+ * If only one Sales Order data, then a single card with details of Sales order.
+ * If more than one Sales Order data, then a list with details of Sales Orders.
+ * 
+ * @param {[SalesOrder]} data Sales Orders to show. 
+ * @returns Response in Coversational AI message format.
+ */
 function getMessages(data) {
     if (data.length == 0) {
         return {
             "type": "text",
-            "content": "There is no Sales Order with given IDs."
+            "content": "There is no Sales Order with given information."
         }
     } else if (data.length == 1) {
         let order = data[0]
@@ -20,6 +29,12 @@ function getMessages(data) {
     }
 }
 
+/**
+ * Creates and returns card message for a Sales Order details.
+ * 
+ * @param {SalesOrder} order Sales Order to show in card.
+ * @returns Card message with Sales Order details.
+ */
 function card(order) {
     return {
         "type": "card",
@@ -33,6 +48,12 @@ function card(order) {
     }
 }
 
+/**
+ * Prepares and returns a list item with Sales Order details.
+ * 
+ * @param {SalesOrder} order Sales Order to show in list item.
+ * @returns 
+ */
 function listElement(order) {
     return {
         "title": "SALES ORDER #" + order.SalesOrder,
