@@ -1,10 +1,10 @@
 const cds = require("@sap/cds");
 const express = require('express');
-const ordersHelper = require('./SalesOrders/orders.js')
-const ordersOrdinalHelper = require('./SalesOrders/ordersOrdinal.js')
-const ordersDateHelper = require('./SalesOrders/ordersDate.js')
-const productsHelper = require('./Products/products.js')
-const bllingsHelper = require('./BillingDetail/billingDetail.js')
+const ordersHelper = require('./sales-orders/orders.js')
+const ordersOrdinalHelper = require('./sales-orders/orders-ordinal.js')
+const ordersDateHelper = require('./sales-orders/orders-date.js')
+const productsHelper = require('./products/products.js')
+const bllingsHelper = require('./billing-detail/billing-detail.js')
 const proxy = require("@sap/cds-odata-v2-adapter-proxy"); //enable OData 2 support
 
 cds.on("bootstrap", (app) => {
