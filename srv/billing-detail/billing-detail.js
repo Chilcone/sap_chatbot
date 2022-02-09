@@ -113,7 +113,6 @@ async function billingsFromSalesOrder(req, resp) {
 module.exports = {billingsResponse, billingsFromSalesOrder, billingsDateResponse}
 
 function getBillingIds(req, salesOrderId) {
-
     let filter = `OrderID eq '${salesOrderId}'`;
     let url = "https://" + req.headers.host + '/example/BillingDocumentItem?$filter=(' + filter + ')'
     return new Promise((resolve, reject) => {

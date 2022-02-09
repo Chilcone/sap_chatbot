@@ -110,3 +110,6 @@ dist
 gen
 *.mtar
 *.mta
+
+# Intellij
+.idea
