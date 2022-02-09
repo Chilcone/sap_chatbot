@@ -8,12 +8,12 @@
  * @returns Response in Coversational AI message format.
  */
 function getMessages(data) {
-    if (data.length == 0) {
+    if (data.length === 0) {
         return {
             "type": "text",
             "content": "There is no Sales Order with given information."
         }
-    } else if (data.length == 1) {
+    } else if (data.length === 1) {
         let order = data[0]
         return card(order)
     } else {

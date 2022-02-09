@@ -60,7 +60,7 @@ async function ordersDateResponse(req, resp) {
             // Prepare messages for response.
             let messages = utility.getMessages(responseData.value)
             // If there is only one Sales Order, it also updates the memory for further skill navigation.
-            if(responseData.value.length == 1) {
+            if(responseData.value.length === 1) {
                 req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
             }
             // Send response with replies and updated conversation.
