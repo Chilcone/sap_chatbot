@@ -53,7 +53,7 @@ const utility = require('./utility.js')
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
              // If there is only one Sales Order, it also updates the memory for further skill navigation.
-            if(responseData.value.length == 1) {
+            if(responseData.value.length === 1) {
                 req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
             }
             // Prepare messages for response.
