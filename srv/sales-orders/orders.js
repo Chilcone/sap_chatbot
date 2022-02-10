@@ -28,7 +28,7 @@ const utility = require('./utility.js')
  *  }
  */
 async function ordersResponse(req, resp) {
-    // Get id's from request.
+    // Get ids from request.
     let ids = req.body.nlp.entities['id'].map(element => element.scalar)    
     
     // Prepare OData with id filter.
