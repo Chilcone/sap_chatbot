@@ -3,10 +3,15 @@ const log = require('cf-nodejs-logging-support');
 const e = require('express');
 
 async function productsResponse(req, resp) {
+        // Get ids from request.
         let ids = req.body.nlp.entities['id'].map(element => element.raw)
+
+        // Prepare OData with id filter.
         var filterParams = ids.map(id => `Product eq '${id}'`)
         var filter = filterParams.join(" or ")
         let url = "https://" + req.headers.host + '/example/Products?$filter=(' + filter + ')'
+        
+        // Fetch OData response.
         https.get(url, res => {
             let data = []
             res.on('data', chunk => {
@@ -14,8 +19,10 @@ async function productsResponse(req, resp) {
             })
             res.on('end', () => {
                 const responseData = JSON.parse(Buffer.concat(data).toString());
+                // Prepare messages for response.
                 let messages = getMessages(responseData.value)
-
+                
+                // Send response with replies and updated conversation.
                 resp.send({
                     "replies": [ messages
                     ],
