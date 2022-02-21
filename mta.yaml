@@ -1,0 +1,89 @@
+## Generated mta.yaml based on template version 0.4.0
+## appName = sap_chatbot
+## language=nodejs; multitenant=false
+## approuter=
+_schema-version: "3.1"
+ID: sap_chatbot
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install --production
+        - npx -p @sap/cds-dk cds build --production
+
+modules:
+  # --------------------- SERVER MODULE ------------------------
+  - name: sap_chatbot-srv
+    # ------------------------------------------------------------
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      disk-quota: 512M
+      memory: 512M
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: my-destination-service
+      - name: sales-xsuaa
+      - name: my-connectivity-service
+
+resources:
+  - name: my-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+        init_data:
+          instance:
+            destinations:
+              - Authentication: BasicAuthentication
+                Name: ERP_IDA_SO_SRV
+                ProxyType: OnPremise
+                CloudConnectorLocationId: SCC01
+                Type: HTTP
+                URL:
+                User: 
+                Password:
+                HTML5.ForwardAuthToken: true
+              - Authentication: BasicAuthentication
+                Name: ERP_IDA_PRO_SRV
+                ProxyType: OnPremise
+                CloudConnectorLocationId: SCC01
+                Type: HTTP
+                URL: 
+                User:
+                Password:
+                HTML5.ForwardAuthToken: true
+              - Authentication: BasicAuthentication
+                Name: ERP_IDA_BD_SRV
+                ProxyType: OnPremise
+                CloudConnectorLocationId: SCC01
+                Type: HTTP
+                URL:
+                User: 
+                Password:
+                HTML5.ForwardAuthToken: true
+            existing_destinations_policy: update
+      service: destination
+      service-plan: lite
+
+  - name: sales-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+  - name: my-connectivity-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: lite
+      service: connectivity
