@@ -1,10 +1,13 @@
 const https = require('https');
 const utility = require('./utility.js')
 
+//  Section 1:  Sales Order /orders Endpoint
+// Function 1.1:  Sales Orders Response
+
 /**
  * Prepares response for the request with Sales Order ID.
  * Expects id(s) in entities.
- * If there is only one id, it adds lastOrderID to memory for futher navigation to other skills.
+ * If there is only one id, it adds lastOrderID to memory for further navigation to other skills.
  * 
  * @param {Request} req Request with Sales Order ID.
  * The form of req body:
@@ -28,14 +31,14 @@ const utility = require('./utility.js')
  *  }
  */
 async function ordersResponse(req, resp) {
-    // Get ids from request.
-    let ids = req.body.nlp.entities['id'].map(element => element.scalar)    
-    
+    // Get id's from request.
+    let ids = req.body.nlp.entities['id'].map(element => element.scalar)
+
     // Prepare OData with id filter.
     var filterParams = ids.map(id => `SalesOrder eq '${id}'`)
     var filter = filterParams.join(" or ")
     let url = "https://" + req.headers.host + '/example/SalesOrders?$filter=(' + filter + ')'
-    
+
     // Fetch OData response.
     https.get(url, res => {
         let data = []
@@ -47,7 +50,7 @@ async function ordersResponse(req, resp) {
             // Prepare messages for response.
             let messages = utility.getMessages(responseData.value)
             // If there is only one Sales Order id, it also updates the memory for further skill navigation.
-            if(responseData.value.length == 1) {
+            if (responseData.value.length == 1) {
                 req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
             }
             // Send response with replies and updated conversation.
@@ -63,4 +66,5 @@ async function ordersResponse(req, resp) {
     })
 }
 
-module.exports = { ordersResponse } 
+module.exports = { ordersResponse }
+

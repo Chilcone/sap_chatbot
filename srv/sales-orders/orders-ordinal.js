@@ -1,10 +1,14 @@
 const https = require('https');
 const utility = require('./utility.js')
+
+//  Section 1:  Sales Order /orders/ordinal Endpoint
+// Function 1.1:  Sales Orders Ordinal Response
+
 /**
  * Prepares response for the request with sorting information.
  * Expects ordinal gold entity in entities.
- * 'The last' has -1 ordinal entity so we used this information to sort the Sales Orders. There is also a 'sort' gold entity in CAI, but it doesn't work as expected. 
- * And restricted entities block gold entities since overlapped entities are not supported(for example it would block last year to be recognized as interval gold entity), 
+ * 'The last' has -1 ordinal entity, so we used this information to sort the Sales Orders. There is also a 'sort' gold entity in CAI, but it doesn't work as expected.
+ * And restricted entities block gold entities since overlapped entities are not supported (for example it would block last year to be recognized as interval gold entity), 
  * so we had to go with ordinal gold entity.
  * E.g. "Show me my last five sales order" would give -1 as ordinal rank and 5 as id scalar.
  * 
@@ -28,22 +32,22 @@ const utility = require('./utility.js')
  *     "replies": [<message according to request>],
  *     "conversation": <updated(if necessary) conversation information got from request>
  *  }
- */async function ordersOrdinalResponse(req, resp) { 
+ */async function ordersOrdinalResponse(req, resp) {
     // Get the count of the sales order. It is mostly matched to 'id' entity due to trained expressions. 
     // Default is 1, since "show my last sales order" type of expressions means only one record.
     let count = 1
-    if('id' in req.body.nlp.entities) {
+    if ('id' in req.body.nlp.entities) {
         count = req.body.nlp.entities['id'][0].scalar
     }
 
     // Get the sorting info from ordinal gold entity.
     let ordinal = 'desc'
-    if(req.body.nlp.entities['ordinal'][0].rank > 0) { 
+    if (req.body.nlp.entities['ordinal'][0].rank > 0) {
         ordinal = 'asc'
     }
     // Prepare OData url.
-    let url = "https://" + req.headers.host + '/example/SalesOrders?$orderby=CreationDate%20'+ordinal+'&$top='+count
-    
+    let url = "https://" + req.headers.host + '/example/SalesOrders?$orderby=CreationDate%20' + ordinal + '&$top=' + count
+
     // Fetch OData response.
     https.get(url, res => {
         let data = []
@@ -52,15 +56,15 @@ const utility = require('./utility.js')
         })
         res.on('end', () => {
             const responseData = JSON.parse(Buffer.concat(data).toString());
-             // If there is only one Sales Order, it also updates the memory for further skill navigation.
-            if(responseData.value.length === 1) {
+            // If there is only one Sales Order, it also updates the memory for further skill navigation.
+            if (responseData.value.length === 1) {
                 req.body.conversation.memory.lastOrderID = responseData.value[0].SalesOrder
             }
             // Prepare messages for response.
             let messages = utility.getMessages(responseData.value)
             // Send response with replies and updated conversation.
             resp.send({
-                "replies": [ messages
+                "replies": [messages
                 ],
                 "conversation": req.body.conversation,
             })
@@ -71,4 +75,5 @@ const utility = require('./utility.js')
     })
 }
 
-module.exports = { ordersOrdinalResponse } 
+module.exports = { ordersOrdinalResponse }
+

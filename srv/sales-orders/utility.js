@@ -1,3 +1,5 @@
+// Section 1: Message Response
+// Function 1.1 :  Get Messages
 /**
  * Prepares Conversational AI responses according to SalesOrder counts in data.
  * If no data, then a single message.
@@ -5,7 +7,7 @@
  * If more than one Sales Order data, then a list with details of Sales Orders.
  * 
  * @param {[SalesOrder]} data Sales Orders to show. 
- * @returns Response in Coversational AI message format.
+ * @returns Response in Conversational AI message format.
  */
 function getMessages(data) {
     if (data.length === 0) {
@@ -29,8 +31,10 @@ function getMessages(data) {
     }
 }
 
+// Section 2: Message Types
+// Function 2.1:  Card Message
 /**
- * Creates and returns card message for a Sales Order details.
+ * Creates and returns card message for one Sales Order.
  * 
  * @param {SalesOrder} order Sales Order to show in card.
  * @returns Card message with Sales Order details.
@@ -48,6 +52,7 @@ function card(order) {
     }
 }
 
+// Function 2.2:  List Element Message
 /**
  * Prepares and returns a list item with Sales Order details.
  * 
@@ -64,4 +69,5 @@ function listElement(order) {
     }
 }
 
-module.exports = { getMessages } 
+module.exports = { getMessages }
+

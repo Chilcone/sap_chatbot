@@ -15,13 +15,14 @@ build-parameters:
       commands:
         - npm install --production
         - npx -p @sap/cds-dk cds build --production
-
+# Section 1: Server Modules
 modules:
   # --------------------- SERVER MODULE ------------------------
   - name: sap_chatbot-srv
     # ------------------------------------------------------------
     type: nodejs
     path: gen/srv
+    # Section 1.1: Server Module Parameters
     parameters:
       buildpack: nodejs_buildpack
       disk-quota: 512M
@@ -36,6 +37,7 @@ modules:
       - name: my-connectivity-service
 
 resources:
+  # Section 2: Destination Service Configurations
   - name: my-destination-service
     type: org.cloudfoundry.managed-service
     parameters:
@@ -45,43 +47,48 @@ resources:
         init_data:
           instance:
             destinations:
+              # Section 2.1: Sales Orders Destination Configuration
               - Authentication: BasicAuthentication
                 Name: ERP_IDA_SO_SRV
                 ProxyType: OnPremise
                 CloudConnectorLocationId: SCC01
                 Type: HTTP
                 URL:
-                User: 
+                User:
                 Password:
                 HTML5.ForwardAuthToken: true
+              # Section 2.2: Products Destination Configuration
               - Authentication: BasicAuthentication
                 Name: ERP_IDA_PRO_SRV
                 ProxyType: OnPremise
                 CloudConnectorLocationId: SCC01
                 Type: HTTP
-                URL: 
+                URL:
                 User:
                 Password:
                 HTML5.ForwardAuthToken: true
+              # Section 2.3: Billing DocumentsDestination Configuration
               - Authentication: BasicAuthentication
                 Name: ERP_IDA_BD_SRV
                 ProxyType: OnPremise
                 CloudConnectorLocationId: SCC01
                 Type: HTTP
                 URL:
-                User: 
+                User:
                 Password:
                 HTML5.ForwardAuthToken: true
-            existing_destinations_policy: update
       service: destination
       service-plan: lite
 
+  # Section 3: XSUAA Service Configuration
   - name: sales-xsuaa
     type: org.cloudfoundry.managed-service
     parameters:
       path: ./xs-security.json
       service: xsuaa
       service-plan: application
+
+  # Section 4: Connectivity Service Configuration
   - name: my-connectivity-service
     type: org.cloudfoundry.managed-service
     parameters:
